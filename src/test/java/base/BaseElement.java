@@ -41,7 +41,7 @@ public abstract class BaseElement {
     /**
      * Возвращает WebElement, либо из кэша, либо через ожидание по локатору.
      */
-    protected WebElement getElement() {
+    public WebElement getElement() {
         if (element != null) {
             return element;
         }
@@ -77,4 +77,5 @@ public abstract class BaseElement {
         WebElement temp_element = getElement();
         temp_element.sendKeys(text);
     }
+
 }

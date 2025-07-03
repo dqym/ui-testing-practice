@@ -2,6 +2,7 @@ package pages;
 
 import base.BasePage;
 import base.BaseElement;
+import elements.Button;
 import elements.Link;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -35,8 +36,7 @@ public class FeedPage extends BasePage {
      * @return WebElement первого поста
      */
     public WebElement openFirstPost() {
-        waitForVisible(FEED_CONTAINER);
-        List<WebElement> posts = waitForAllVisible(POST_ITEMS);
+        List<WebElement> posts = getAllPosts();
 
         if (posts.isEmpty()) {
             throw new IllegalStateException("Посты не найдены в ленте.");
@@ -51,32 +51,6 @@ public class FeedPage extends BasePage {
     }
 
     /**
-     * Скроллит элемент в центр экрана.
-     *
-     * @param element элемент, к которому скроллим
-     */
-    protected void scrollToCenter(WebElement element) {
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView({block: 'center'});", element);
-    }
-
-    /**
-     * Выполняет клик по элементу.
-     *
-     * @param element элемент для клика
-     */
-    protected void click(WebElement element) {
-        wait.until(driver -> {
-            try {
-                element.click();
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-    }
-
-    /**
      * Получает список всех видимых постов в ленте.
      *
      * @return список элементов постов
@@ -85,4 +59,60 @@ public class FeedPage extends BasePage {
         waitForVisible(FEED_CONTAINER);
         return waitForAllVisible(POST_ITEMS);
     }
+
+    /**
+     * Кликает по кнопке "действий" у первого поста.
+     */
+    public void clickPostOverflowMenu() {
+        Button overflowButton = Button.of(driver, By.cssSelector("shreddit-post-overflow-menu"));
+
+        overflowButton.click();
+    }
+
+    public void clickPostOverflowReport() {
+        Button overflowReportButton = Button.fromShadowHost(driver,
+                By.cssSelector("shreddit-post-overflow-menu"),
+                By.cssSelector("#post-overflow-report"));
+
+        overflowReportButton.click();
+    }
+
+    public void clickReportSPAMButton() {
+        Button SPAM = Button.fromShadowHost(driver,
+                By.cssSelector("[slot-name='REPORT_REASONS']"),
+                By.cssSelector("[value='SPAM']"));
+
+        SPAM.click();
+    }
+
+    public void clickNextReportButton() {
+        Button sendReport = Button.fromShadowHost(driver,
+                By.cssSelector("[slot-name='REPORT_REASONS']"),
+                By.cssSelector("#report-action-button"));
+
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", sendReport.getElement());
+    }
+
+    public void clickCategoryOfSPAM() {
+        Button category = Button.fromShadowHost(driver,
+                By.cssSelector("[slot-name='SPAM']"),
+                By.cssSelector("[value='SPAM_COMMENT_FLOODING']"));
+
+        category.click();
+    }
+
+    public void clickSendReportButton() {
+        Button sendReport = Button.fromShadowHost(driver,
+                By.cssSelector("[slot-name='SPAM']"),
+                By.cssSelector("#report-action-button"));
+
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", sendReport.getElement());
+    }
+
+    public Boolean isReportSend() {
+        WebElement successPlate = driver.findElement(By.cssSelector("[slot-name='SUCCESS']"));
+
+        return successPlate.isDisplayed();
+    }
+
 }
