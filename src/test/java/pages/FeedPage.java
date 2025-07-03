@@ -138,4 +138,8 @@ public class FeedPage extends BasePage {
         return getCurrentUrl().contains(href);
     }
 
+    public void clickCreatePost() {
+        Link createPost = Link.of(driver, By.cssSelector("#create-post"));
+        createPost.click();
+    }
 }

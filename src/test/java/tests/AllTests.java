@@ -3,6 +3,7 @@ package tests;
 import base.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
+import pages.CreatePostPage;
 import pages.FeedPage;
 import pages.LoginPage;
 import pages.PostPage;
@@ -20,6 +21,7 @@ public class AllTests extends BaseTest {
     private LoginPage loginPage;
     private FeedPage feedPage;
     private PostPage postPage;
+    private CreatePostPage createPostPage;
 
     private void authorize() {
         try {
@@ -41,6 +43,7 @@ public class AllTests extends BaseTest {
         loginPage = new LoginPage(driver);
         feedPage = new FeedPage(driver);
         postPage = new PostPage(driver);
+        createPostPage = new CreatePostPage(driver);
     }
 
     /**
@@ -106,5 +109,20 @@ public class AllTests extends BaseTest {
 
         Assert.assertTrue("Текущий URL не соответствует ожидаемому",
                 feedPage.checkActivePage("all"));
+    }
+
+    @Test
+    public void testNotification() { //не работает :(
+        authorize();
+
+        feedPage.clickCreatePost();
+
+        createPostPage.clickComunityPickerMenu();
+        createPostPage.clickSelectProfile(COMMENT_AUTHOR);
+        createPostPage.clickTitle();
+        createPostPage.enterPostTitleText();
+        createPostPage.clickBody();
+        createPostPage.enterPostBodyText();
+        createPostPage.clickSubmitPostButton();
     }
 }

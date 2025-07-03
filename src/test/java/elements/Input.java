@@ -15,13 +15,13 @@ public class Input extends BaseElement {
         super(driver, element);
     }
 
-    public static Input of(By by, WebDriver driver) {
+    public static Input of(WebDriver driver, By by) {
         WebElement element = driver.findElement(by);
         return new Input(driver, element);
     }
 
     public static Input byClass(WebDriver driver, String className) {
-        return of(By.className(className), driver);
+        return of(driver, By.className(className));
     }
 
     public static Input fromShadowHost(WebDriver driver, By hostLocator, By shadowLocator) {

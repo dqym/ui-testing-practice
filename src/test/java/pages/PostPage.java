@@ -68,14 +68,4 @@ public class PostPage extends BasePage {
 
         return expectedText.equals(actualText);
     }
-
-    /**
-     * Скроллит элемент в центр видимой области браузера.
-     *
-     * @param element элемент для скролла
-     */
-    private void scrollToCenter(WebElement element) {
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView({block: 'center'});", element);
-    }
 }

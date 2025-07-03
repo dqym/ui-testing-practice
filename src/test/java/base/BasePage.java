@@ -100,4 +100,14 @@ public abstract class BasePage {
     public String getCurrentUrl() {
         return driver.getCurrentUrl();
     }
+
+    /**
+     * Скроллит элемент в центр видимой области браузера.
+     *
+     * @param element элемент для скролла
+     */
+    public void scrollToCenter(WebElement element) {
+        ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].scrollIntoView({block: 'center'});", element);
+    }
 }
