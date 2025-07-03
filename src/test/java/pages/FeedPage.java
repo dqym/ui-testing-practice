@@ -1,42 +1,88 @@
 package pages;
 
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import base.BasePage;
+import base.BaseElement;
+import elements.Link;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
-import java.time.Duration;
 import java.util.List;
 
-public class FeedPage {
-    private WebDriver driver;      // Веб-драйвер для управления браузером
+/**
+ * Страница ленты постов.
+ * Отвечает за действия, связанные с открытием постов.
+ */
+public class FeedPage extends BasePage {
 
-    // Конструктор страницы ленты, принимает WebDriver
+    private static final By FEED_CONTAINER = By.cssSelector("shreddit-feed");
+    private static final By POST_ITEMS = By.cssSelector("shreddit-post");
+    private static final By POST_LINK = By.cssSelector("a[slot='full-post-link']");
+
+    /**
+     * Конструктор страницы ленты.
+     *
+     * @param driver WebDriver
+     */
     public FeedPage(WebDriver driver) {
-        this.driver = driver;
+        super(driver);
     }
 
-    // Метод открытия первого поста из ленты
-    public void openFirstPost() {
-        // Создаем объект ожидания с таймаутом 10 секунд
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    /**
+     * Открывает первый пост в ленте.
+     *
+     * @return WebElement первого поста
+     */
+    public WebElement openFirstPost() {
+        waitForVisible(FEED_CONTAINER);
+        List<WebElement> posts = waitForAllVisible(POST_ITEMS);
 
-        // Ждем появления элемента ленты с селектором "shreddit-feed"
-        WebElement feed = wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.cssSelector("shreddit-feed")
-        ));
+        if (posts.isEmpty()) {
+            throw new IllegalStateException("Посты не найдены в ленте.");
+        }
 
-        // Ждем появления всех элементов постов с селектором "shreddit-post"
-        List<WebElement> posts = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
-                By.cssSelector("shreddit-post")
-        ));
-
-        // Получаем первый пост из списка
         WebElement firstPost = posts.getFirst();
+        Link link = Link.of(driver, POST_LINK);
 
-        // Находим внутри первого поста ссылку с атрибутом slot='full-post-link' — это ссылка на полный пост
-        WebElement titleLink = firstPost.findElement(By.cssSelector("a[slot='full-post-link']"));
+        link.jsClick();
 
-        // Выполняем клик по ссылке через JavaScript, чтобы избежать проблем с элементом, который может быть не кликабелен напрямую
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", titleLink);
+        return firstPost;
+    }
+
+    /**
+     * Скроллит элемент в центр экрана.
+     *
+     * @param element элемент, к которому скроллим
+     */
+    protected void scrollToCenter(WebElement element) {
+        ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].scrollIntoView({block: 'center'});", element);
+    }
+
+    /**
+     * Выполняет клик по элементу.
+     *
+     * @param element элемент для клика
+     */
+    protected void click(WebElement element) {
+        wait.until(driver -> {
+            try {
+                element.click();
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Получает список всех видимых постов в ленте.
+     *
+     * @return список элементов постов
+     */
+    public List<WebElement> getAllPosts() {
+        waitForVisible(FEED_CONTAINER);
+        return waitForAllVisible(POST_ITEMS);
     }
 }

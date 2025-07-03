@@ -1,54 +1,81 @@
 package pages;
 
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import base.BasePage;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
-import java.time.Duration;
+/**
+ * Страница отдельного поста.
+ * Отвечает за добавление комментариев и проверку их отображения.
+ */
+public class PostPage extends BasePage {
 
-public class PostPage {
-    private WebDriver driver;  // Веб-драйвер для управления браузером
+    private static final By ADD_COMMENT_BUTTON = By.cssSelector("[noun='add_comment_button']");
+    private static final By COMMENT_INPUT_CONTAINER = By.cssSelector("#main-content shreddit-composer > div:nth-child(1)");
+    private static final By SUBMIT_COMMENT_BUTTON = By.cssSelector("button[slot='submit-button']");
 
-    // Конструктор принимает WebDriver и сохраняет в поле класса
+    /**
+     * Конструктор страницы поста.
+     *
+     * @param driver WebDriver
+     */
     public PostPage(WebDriver driver) {
-        this.driver = driver;
+        super(driver);
     }
 
-    // Метод для добавления комментария с текстом `text`
-    public void addComment(String text) {
-        // Создаем WebDriverWait с таймаутом 10 секунд
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
-        // Ждем, пока кнопка "добавить комментарий" станет кликабельной, находим её по атрибуту noun
-        WebElement commentBox = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[noun='add_comment_button']")));
-
-        // Скроллим кнопку в центр видимой области браузера, чтобы на неё можно было кликнуть
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", commentBox);
-
-        // Кликаем по кнопке "добавить комментарий"
-        commentBox.click();
-
-        // Находим внутри страницы элемент ввода комментария.
-        // XPath указывает на div[1] внутри shreddit-composer внутри main-content.
-        WebElement innerInput = commentBox.findElement(By.xpath("//*[@id=\"main-content\"]//shreddit-composer/div[1]\n"));
-
-        // Вводим текст комментария в найденное поле
-        innerInput.sendKeys(text);
-
-        // Находим кнопку отправки комментария (submit-button) и кликаем по ней
-        WebElement commentButton = driver.findElement(By.cssSelector("button[slot='submit-button']"));
-        commentButton.click();
+    /**
+     * Кликает по кнопке "Добавить комментарий".
+     */
+    public void clickAddCommentButton() {
+        WebElement addCommentBtn = waitForClickable(ADD_COMMENT_BUTTON);
+        scrollToCenter(addCommentBtn);
+        addCommentBtn.click();
     }
 
-    // Метод проверяет, что комментарий от пользователя `username` с текстом `expectedText` отображается
+    /**
+     * Вводит текст комментария в поле ввода.
+     *
+     * @param text текст комментария
+     */
+    public void enterCommentText(String text) {
+        WebElement commentInput = waitForVisible(COMMENT_INPUT_CONTAINER);
+        commentInput.sendKeys(text);
+    }
+
+    /**
+     * Кликает по кнопке отправки комментария.
+     */
+    public void clickSubmitCommentButton() {
+        WebElement submitBtn = waitForClickable(SUBMIT_COMMENT_BUTTON);
+        submitBtn.click();
+    }
+
+    /**
+     * Проверяет, что комментарий с указанным именем пользователя и текстом виден под постом.
+     *
+     * @param username имя автора комментария
+     * @param expectedText текст комментария
+     * @return true если комментарий найден и текст совпадает, иначе false
+     */
     public boolean isCommentVisible(String username, String expectedText) {
-        // Находим элемент комментария по автору (атрибут author)
-        WebElement comment = driver.findElement(By.cssSelector("shreddit-comment[author='" + username + "']"));
+        By commentLocator = By.cssSelector("shreddit-comment[author='" + username + "']");
+        WebElement comment = waitForVisible(commentLocator);
 
-        // Внутри комментария находим содержимое текста (параграф в div с id, оканчивающимся на '-post-rtjson-content')
-        String commentText = comment.findElement(By.cssSelector("div[id$='-post-rtjson-content'] p")).getText();
+        WebElement commentTextElement = comment.findElement(By.cssSelector("div[id$='-post-rtjson-content'] p"));
+        String actualText = commentTextElement.getText();
 
-        // Сравниваем текст комментария с ожидаемым и возвращаем результат
-        return commentText.equals(expectedText);
+        return expectedText.equals(actualText);
+    }
+
+    /**
+     * Скроллит элемент в центр видимой области браузера.
+     *
+     * @param element элемент для скролла
+     */
+    private void scrollToCenter(WebElement element) {
+        ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].scrollIntoView({block: 'center'});", element);
     }
 }

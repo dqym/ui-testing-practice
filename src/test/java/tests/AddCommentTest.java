@@ -1,47 +1,53 @@
 package tests;
 
-import org.junit.*;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import pages.*;
+import base.BaseTest;
+import org.junit.Assert;
+import org.junit.Test;
+import pages.FeedPage;
+import pages.LoginPage;
+import pages.PostPage;
 
-import java.time.Duration;
+/**
+ * Тест на добавление комментария к посту.
+ */
+public class AddCommentTest extends BaseTest {
 
-public class AddCommentTest {
-    private WebDriver driver;      // Веб-драйвер для управления браузером
-    private LoginPage loginPage;   // Страница логина
-    private FeedPage feedPage;     // Страница ленты постов
-    private PostPage postPage;     // Страница отдельного поста
+    private static final String TEST_USERNAME = "testmail99213@mail.ru";
+    private static final String TEST_PASSWORD = "#55Ra9k9?j@xTyv";
+    private static final String COMMENT_TEXT = "❤";
+    private static final String COMMENT_AUTHOR = "No-Customer3367";
 
-    // Метод, выполняемый перед каждым тестом — настройка драйвера и страниц
-    @Before
-    public void setUp() {
-        driver = new ChromeDriver();  // Инициализация ChromeDriver
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10)); // Установка неявного ожидания 10 секунд
-        driver.get("https://www.reddit.com/login/");  // Открываем страницу логина
+    private LoginPage loginPage;
+    private FeedPage feedPage;
+    private PostPage postPage;
 
-        // Инициализация объектов страниц, передаем драйвер в конструкторы
+    @Override
+    public void openBrowser() {
+        super.openBrowser();
+
         loginPage = new LoginPage(driver);
         feedPage = new FeedPage(driver);
         postPage = new PostPage(driver);
     }
 
-    // Сам тест — проверка возможности добавить комментарий под постом
+    /**
+     * Тест проверяет возможность добавить комментарий под первым постом в ленте.
+     */
     @Test
     public void testAddComment() {
-        loginPage.login("testmail99213@mail.ru", "#55Ra9k9?j@xTyv");  // Логинимся под тестовым пользователем
-        feedPage.openFirstPost();  // Открываем первый пост из ленты
-        String comment = "❤";      // Текст комментария для добавления
-        postPage.addComment(comment);  // Добавляем комментарий
-        // Проверяем, что комментарий отображается под постом, ожидаем имя автора комментария "No-Customer3367"
-        Assert.assertTrue("Комментарий не найден под постом", postPage.isCommentVisible("No-Customer3367", comment));
-    }
+        loginPage.enterUsername(TEST_USERNAME);
+        loginPage.enterPassword(TEST_PASSWORD);
+        loginPage.clickLoginButton();
 
-    // Метод, выполняемый после каждого теста — закрываем браузер
-    @After
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();  // Закрываем все окна и останавливаем драйвер
-        }
+        feedPage.openFirstPost();
+
+        postPage.clickAddCommentButton();
+        postPage.enterCommentText(COMMENT_TEXT);
+        postPage.clickSubmitCommentButton();
+
+        Assert.assertTrue(
+                "Комментарий не найден под постом",
+                postPage.isCommentVisible(COMMENT_AUTHOR, COMMENT_TEXT)
+        );
     }
 }

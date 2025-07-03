@@ -1,39 +1,66 @@
 package pages;
 
-import org.openqa.selenium.*;
+import base.BasePage;
+import elements.Input;
+import elements.Button;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
-public class LoginPage {
-    private WebDriver driver;          // Веб-драйвер для управления браузером
-    private WebElement usernameField;  // Поле для ввода имени пользователя
-    private WebElement passwordField;  // Поле для ввода пароля
-    private WebElement loginButton;    // Кнопка входа
 
-    // Конструктор страницы логина, принимает WebDriver
+/**
+ * Страница логина.
+ * Предоставляет методы для взаимодействия с полями ввода и кнопкой входа.
+ */
+public class LoginPage extends BasePage {
+
+    private final Input usernameInput;
+    private final Input passwordInput;
+    private final Button loginButton;
+
+    /**
+     * Конструктор страницы логина.
+     * Инициализирует элементы страницы.
+     *
+     * @param driver WebDriver
+     */
     public LoginPage(WebDriver driver) {
-        this.driver = driver;
+        super(driver);
 
-        // Находим кастомный элемент faceplate-text-input с id login-username
-        WebElement host = driver.findElement(By.cssSelector("faceplate-text-input#login-username"));
-        // Получаем shadow root этого кастомного элемента
-        SearchContext shadowRoot = host.getShadowRoot();
-        // Внутри shadow root находим настоящий input для имени пользователя
-        this.usernameField = shadowRoot.findElement(By.cssSelector("input[name='username']"));
+        usernameInput = Input.fromShadowHost(driver,
+                By.cssSelector("faceplate-text-input#login-username"),
+                By.cssSelector("input[name='username']"));
 
-        // Аналогично для поля пароля: находим кастомный элемент с id login-password
-        host = driver.findElement(By.cssSelector("faceplate-text-input#login-password"));
-        shadowRoot = host.getShadowRoot();
-        // Внутри shadow root находим input для пароля
-        this.passwordField = shadowRoot.findElement(By.cssSelector("input[name='password']"));
+        passwordInput = Input.fromShadowHost(driver,
+                By.cssSelector("faceplate-text-input#login-password"),
+                By.cssSelector("input[name='password']"));
 
-        // Находим кнопку логина по классу "login"
-        loginButton = driver.findElement(By.cssSelector("button.login"));
+        loginButton = Button.of(driver, By.cssSelector("button.login"));
     }
 
-    // Метод для выполнения входа: вводит логин и пароль, нажимает кнопку
-    public void login(String username, String password) {
-        usernameField.sendKeys(username);   // Вводим имя пользователя
-        passwordField.sendKeys(password);   // Вводим пароль
-        loginButton.click();                 // Кликаем кнопку "Войти"
+    /**
+     * Вводит имя пользователя в поле логина.
+     *
+     * @param username имя пользователя
+     */
+    public void enterUsername(String username) {
+        usernameInput.sendKeys(username);
+    }
+
+    /**
+     * Вводит пароль в поле пароля.
+     *
+     * @param password пароль пользователя
+     */
+    public void enterPassword(String password) {
+        passwordInput.sendKeys(password);
+    }
+
+    /**
+     * Кликает кнопку входа и ожидает перезагрузку страницы.
+     */
+    public void clickLoginButton() {
+//        WebElement oldPage = driver.findElement(By.tagName("html"));
+        loginButton.click();
 
         try {
             Thread.sleep(6000);              // Пауза 6 секунд для ожидания загрузки/авторизации
@@ -42,5 +69,9 @@ public class LoginPage {
         }
 
         driver.navigate().refresh();         // Обновляем страницу после входа
+//        // Ожидаем, пока старая страница станет "устаревшей" (перезагрузится)
+//        wait.withTimeout(java.time.Duration.ofSeconds(6))
+//                .until(ExpectedConditions.stalenessOf(oldPage));
     }
+
 }
