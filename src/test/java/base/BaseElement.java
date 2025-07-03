@@ -56,6 +56,18 @@ public abstract class BaseElement {
         }
     }
 
+    /**
+     * Кликает по элементу через JavaScript.
+     */
+    public void jsClick() {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        if (element != null) {
+            js.executeScript("arguments[0].click();", element);
+        } else {
+            js.executeScript("arguments[0].click();", driver.findElement(locator));
+        }
+    }
+
     public boolean isVisible() {
         try {
             return getElement().isDisplayed();
@@ -77,5 +89,4 @@ public abstract class BaseElement {
         WebElement temp_element = getElement();
         temp_element.sendKeys(text);
     }
-
 }

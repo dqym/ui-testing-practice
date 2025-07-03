@@ -14,12 +14,25 @@ public class AllTests extends BaseTest {
 
     private static final String TEST_USERNAME = "testmail36244@mail.ru";
     private static final String TEST_PASSWORD = "S26Yqm#@yCePjq@";
-    private static final String COMMENT_TEXT = "meow";
+    private static final String COMMENT_TEXT = "lol";
     private static final String COMMENT_AUTHOR = "AdSafe1407";
 
     private LoginPage loginPage;
     private FeedPage feedPage;
     private PostPage postPage;
+
+    private void authorize() {
+        try {
+            Thread.sleep(2000);
+            loginPage.enterUsername(TEST_USERNAME);
+            Thread.sleep(3000);
+            loginPage.enterPassword(TEST_PASSWORD);
+            Thread.sleep(1000);
+            loginPage.clickLoginButton();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void openBrowser() {
@@ -35,15 +48,7 @@ public class AllTests extends BaseTest {
      */
     @Test
     public void testAddComment() {
-        try {
-            loginPage.enterUsername(TEST_USERNAME);
-            Thread.sleep(3000);
-            loginPage.enterPassword(TEST_PASSWORD);
-            Thread.sleep(1000);
-            loginPage.clickLoginButton();
-        } catch (InterruptedException e) {
-            e.printStackTrace();            // Обработка возможного исключения прерывания
-        }
+        authorize();
 
         feedPage.openFirstPost();
 
@@ -59,15 +64,7 @@ public class AllTests extends BaseTest {
 
     @Test
     public void testSendReport() {
-        try {
-            loginPage.enterUsername(TEST_USERNAME);
-            Thread.sleep(3000);
-            loginPage.enterPassword(TEST_PASSWORD);
-            Thread.sleep(1000);
-            loginPage.clickLoginButton();
-        } catch (InterruptedException e) {
-            e.printStackTrace();            // Обработка возможного исключения прерывания
-        }
+        authorize();
 
         feedPage.clickPostOverflowMenu();
         feedPage.clickPostOverflowReport();
@@ -77,5 +74,37 @@ public class AllTests extends BaseTest {
         feedPage.clickSendReportButton();
 
         Assert.assertTrue("Жалоба не отправлена", feedPage.isReportSend());
+    }
+
+    @Test
+    public void testNavigationBarHome() {
+        authorize();
+
+        feedPage.expandSideBar();
+        feedPage.clickCategoryButton("home");
+
+        Assert.assertTrue("Текущий URL не соответствует ожидаемому", feedPage.checkActivePage("home"));
+    }
+
+    @Test
+    public void testNavigationBarPopular() {
+        authorize();
+
+        feedPage.expandSideBar();
+        feedPage.clickCategoryButton("popular");
+
+        Assert.assertTrue("Текущий URL не соответствует ожидаемому",
+                feedPage.checkActivePage("popular"));
+    }
+
+    @Test
+    public void testNavigationBarAll() {
+        authorize();
+
+        feedPage.expandSideBar();
+        feedPage.clickCategoryButton("all");
+
+        Assert.assertTrue("Текущий URL не соответствует ожидаемому",
+                feedPage.checkActivePage("all"));
     }
 }

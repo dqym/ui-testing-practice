@@ -1,10 +1,7 @@
 package elements;
 
 import base.BaseElement;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 /**
  * Класс для взаимодействия с элементом-ссылкой <a>.
@@ -63,11 +60,10 @@ public class Link extends BaseElement {
         return getHref().equalsIgnoreCase(url);
     }
 
-    /**
-     * Кликает по ссылке через JavaScript.
-     */
-    public void jsClick() {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].click();", element);
+    public static Link fromShadowHost(WebDriver driver, By hostLocator, By shadowLocator) {
+        WebElement host = driver.findElement(hostLocator);
+        SearchContext shadowRoot = host.getShadowRoot();
+        WebElement element = shadowRoot.findElement(shadowLocator);
+        return new Link(driver, element);
     }
 }
