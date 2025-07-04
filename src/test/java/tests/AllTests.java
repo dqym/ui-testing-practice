@@ -13,10 +13,10 @@ import pages.PostPage;
  */
 public class AllTests extends BaseTest {
 
-    private static final String TEST_USERNAME = "testmail36244@mail.ru";
-    private static final String TEST_PASSWORD = "S26Yqm#@yCePjq@";
+    private static final String TEST_USERNAME = "Turbulent-Menu-9234";
+    private static final String TEST_PASSWORD = "popka068";
     private static final String COMMENT_TEXT = "lol";
-    private static final String COMMENT_AUTHOR = "AdSafe1407";
+    private static final String COMMENT_AUTHOR = "Turbulent-Menu-9234";
 
     private LoginPage loginPage;
     private FeedPage feedPage;
@@ -112,12 +112,13 @@ public class AllTests extends BaseTest {
     }
 
     @Test
-    public void testNotification() { //не работает :(
+    public void testNotification() throws InterruptedException { //не работает :(
         authorize();
 
         feedPage.clickCreatePost();
 
         createPostPage.clickComunityPickerMenu();
+        createPostPage.enterUsernameText(COMMENT_AUTHOR);
         createPostPage.clickSelectProfile(COMMENT_AUTHOR);
         createPostPage.clickTitle();
         createPostPage.enterPostTitleText();

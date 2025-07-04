@@ -3,11 +3,12 @@ package pages;
 import base.BasePage;
 import elements.Button;
 import elements.Input;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+import java.util.List;
 
 public class CreatePostPage extends BasePage {
 
@@ -48,15 +49,33 @@ public class CreatePostPage extends BasePage {
         menu.click();
     }
 
-    public void clickSelectProfile(String profileName) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector("li[data-select-value]")
-        ));
+    public void enterUsernameText(String username) {
+        Input input = Input.fromShadowHost(driver,
+                By.cssSelector("#post-submit-community-picker"),
+                By.cssSelector("#search-input"));
 
-        By locator = By.xpath("//li[contains(@data-select-value, '" + profileName + "')]");
-        WebElement target = driver.findElement(locator);
+        input.sendKeys("u/" + username);
+    }
+
+    public void clickSelectProfile(String profileName) {
+        WebElement host = driver.findElement(By.cssSelector("#post-submit-community-picker"));
+        SearchContext shadowRoot = host.getShadowRoot();
+
+        List<WebElement> listItems = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(driver -> {
+                    List<WebElement> items = shadowRoot.findElements(By.cssSelector("li[data-select-value]"));
+                    return items.isEmpty() ? null : items;
+                });
+
+        WebElement target = listItems.stream()
+                .filter(el -> el.getAttribute("data-select-value").contains(profileName))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Профиль не найден: " + profileName));
+
         target.click();
     }
+
+
 
 
     public void clickSubmitPostButton() {
