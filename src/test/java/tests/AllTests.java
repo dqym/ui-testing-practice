@@ -7,16 +7,17 @@ import pages.CreatePostPage;
 import pages.FeedPage;
 import pages.LoginPage;
 import pages.PostPage;
+import util.CookieManager;
 
 /**
  * Тест на добавление комментария к посту.
  */
 public class AllTests extends BaseTest {
 
-    private static final String TEST_USERNAME = "Turbulent-Menu-9234";
-    private static final String TEST_PASSWORD = "popka068";
+    private static final String TEST_USERNAME = "testmail7654352@mail.ru";
+    private static final String TEST_PASSWORD = "qwe123123";
     private static final String COMMENT_TEXT = "lol";
-    private static final String COMMENT_AUTHOR = "Turbulent-Menu-9234";
+    private static final String COMMENT_AUTHOR = "FearlessMacaron214";
 
     private LoginPage loginPage;
     private FeedPage feedPage;
@@ -24,17 +25,23 @@ public class AllTests extends BaseTest {
     private CreatePostPage createPostPage;
 
     private void authorize() {
-        try {
-            Thread.sleep(2000);
-            loginPage.enterUsername(TEST_USERNAME);
-            Thread.sleep(3000);
-            loginPage.enterPassword(TEST_PASSWORD);
-            Thread.sleep(1000);
-            loginPage.clickLoginButton();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        CookieManager.loadCookies(driver);
+        if (driver.getCurrentUrl().contains("/login")) {
+            try {
+                Thread.sleep(2000);
+                loginPage.enterUsername(TEST_USERNAME);
+                Thread.sleep(3000);
+                loginPage.enterPassword(TEST_PASSWORD);
+                Thread.sleep(1000);
+                loginPage.clickLoginButton();
+                Thread.sleep(3000);
+                CookieManager.saveCookies(driver);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
+
 
     @Override
     public void openBrowser() {
