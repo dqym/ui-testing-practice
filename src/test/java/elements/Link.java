@@ -1,12 +1,11 @@
 package elements;
 
-import base.BaseElement;
 import org.openqa.selenium.*;
 
 /**
  * Класс для взаимодействия с элементом-ссылкой <a>.
  */
-public class Link extends BaseElement {
+public class Link extends ClickableElement {
 
     /**
      * Конструктор, инициализирующий ссылку по WebElement.
@@ -25,7 +24,7 @@ public class Link extends BaseElement {
      * @param driver WebDriver
      * @return объект Link
      */
-    public static Link of(WebDriver driver, By by) {
+    public static Link fromLocator(WebDriver driver, By by) {
         WebElement element = driver.findElement(by);
         return new Link(driver, element);
     }
@@ -38,7 +37,7 @@ public class Link extends BaseElement {
      * @return объект Link
      */
     public static Link byText(WebDriver driver, String linkText) {
-        return of(driver, By.linkText(linkText));
+        return fromLocator(driver, By.linkText(linkText));
     }
 
     /**

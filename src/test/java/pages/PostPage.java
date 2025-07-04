@@ -1,8 +1,9 @@
 package pages;
 
-import base.BasePage;
+import elements.Button;
+import elements.Comment;
+import elements.Input;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -29,8 +30,9 @@ public class PostPage extends BasePage {
      * Кликает по кнопке "Добавить комментарий".
      */
     public void clickAddCommentButton() {
-        WebElement addCommentBtn = waitForClickable(ADD_COMMENT_BUTTON);
-        scrollToCenter(addCommentBtn);
+        Button addCommentBtn = Button.fromLocator(driver, ADD_COMMENT_BUTTON);
+        scrollToCenter(addCommentBtn.getElement());
+
         addCommentBtn.click();
     }
 
@@ -40,7 +42,8 @@ public class PostPage extends BasePage {
      * @param text текст комментария
      */
     public void enterCommentText(String text) {
-        WebElement commentInput = waitForVisible(COMMENT_INPUT_CONTAINER);
+        Input commentInput = Input.fromLocator(driver, COMMENT_INPUT_CONTAINER);
+
         commentInput.sendKeys(text);
     }
 
@@ -48,23 +51,32 @@ public class PostPage extends BasePage {
      * Кликает по кнопке отправки комментария.
      */
     public void clickSubmitCommentButton() {
-        WebElement submitBtn = waitForClickable(SUBMIT_COMMENT_BUTTON);
-        submitBtn.click();
+        Button submitBtn = Button.fromLocator(driver, SUBMIT_COMMENT_BUTTON);
+
+        submitBtn.jsClick();
     }
 
     /**
      * Проверяет, что комментарий с указанным именем пользователя и текстом виден под постом.
+     * <p>
+     * Метод выполняет следующие действия:
+     * <ol>
+     *   <li>Ищет комментарий от указанного пользователя по атрибуту author</li>
+     *   <li>Извлекает текст найденного комментария</li>
+     *   <li>Сравнивает фактический текст с ожидаемым</li>
+     * </ol>
+     * <p>
+     * Если комментарий не найден, будет выброшено исключение NoSuchElementException,
+     * которое может быть обработано вызывающим кодом.
      *
-     * @param username имя автора комментария
-     * @param expectedText текст комментария
-     * @return true если комментарий найден и текст совпадает, иначе false
+     * @param username имя автора комментария для поиска
+     * @param expectedText ожидаемый текст комментария для проверки
+     * @return true если комментарий найден и его текст совпадает с ожидаемым, иначе false
+     * @throws org.openqa.selenium.NoSuchElementException если комментарий от указанного пользователя не найден
      */
     public boolean isCommentVisible(String username, String expectedText) {
-        By commentLocator = By.cssSelector("shreddit-comment[author='" + username + "']");
-        WebElement comment = waitForVisible(commentLocator);
-
-        WebElement commentTextElement = comment.findElement(By.cssSelector("div[id$='-post-rtjson-content'] p"));
-        String actualText = commentTextElement.getText();
+        Comment comment = Comment.fromLocator(driver, By.cssSelector("shreddit-comment[author='" + username + "']"));
+        String actualText = comment.getText();
 
         return expectedText.equals(actualText);
     }

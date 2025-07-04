@@ -1,6 +1,5 @@
 package pages;
 
-import base.BasePage;
 import elements.Input;
 import elements.Button;
 import org.openqa.selenium.By;
@@ -34,7 +33,7 @@ public class LoginPage extends BasePage {
                 By.cssSelector("faceplate-text-input#login-password"),
                 By.cssSelector("input[name='password']"));
 
-        loginButton = Button.of(driver, By.cssSelector("button.login"));
+        loginButton = Button.fromLocator(driver, By.cssSelector("button.login"));
     }
 
     /**
@@ -59,19 +58,15 @@ public class LoginPage extends BasePage {
      * Кликает кнопку входа и ожидает перезагрузку страницы.
      */
     public void clickLoginButton() {
-//        WebElement oldPage = driver.findElement(By.tagName("html"));
         loginButton.click();
 
         try {
-            Thread.sleep(6000);              // Пауза 6 секунд для ожидания загрузки/авторизации
+            Thread.sleep(6000);
         } catch (InterruptedException e) {
-            e.printStackTrace();            // Обработка возможного исключения прерывания
+            e.printStackTrace();
         }
 
-        driver.navigate().refresh();         // Обновляем страницу после входа
-//        // Ожидаем, пока старая страница станет "устаревшей" (перезагрузится)
-//        wait.withTimeout(java.time.Duration.ofSeconds(6))
-//                .until(ExpectedConditions.stalenessOf(oldPage));
+        driver.navigate().refresh();
     }
 
 }
