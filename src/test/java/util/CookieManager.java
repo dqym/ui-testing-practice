@@ -11,41 +11,36 @@ import java.util.Set;
  */
 public class CookieManager {
 
-    private static final String COOKIE_FILE = "cookies.data";
+    private static final String COOKIE_DIR = "cookies";
 
-    /**
-     * Сохраняет все cookies текущей сессии в файл.
-     *
-     * @param driver WebDriver с активной сессией
-     */
-    public static void saveCookies(WebDriver driver) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(COOKIE_FILE))) {
+    static {
+        new File(COOKIE_DIR).mkdirs(); // создать директорию, если не существует
+    }
+
+    public static void saveCookies(WebDriver driver, String username) {
+        File file = new File(COOKIE_DIR + File.separator + username + ".data");
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(driver.manage().getCookies());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Загружает cookies из файла и добавляет их в текущую сессию.
-     *
-     * @param driver WebDriver для добавления cookies
-     */
-    @SuppressWarnings("unchecked")
-    public static void loadCookies(WebDriver driver) {
-        File file = new File(COOKIE_FILE);
+    public static void loadCookies(WebDriver driver, String username) {
+        File file = new File(COOKIE_DIR + File.separator + username + ".data");
         if (!file.exists()) return;
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             Set<Cookie> cookies = (Set<Cookie>) ois.readObject();
-            driver.get("https://www.reddit.com"); // важно: открыть домен перед добавлением cookies
+            driver.get("https://www.reddit.com"); // обязательно зайти на домен
             for (Cookie cookie : cookies) {
                 driver.manage().addCookie(cookie);
             }
-            driver.navigate().refresh(); // обновить страницу с куками
+            driver.navigate().refresh();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 }
+
 

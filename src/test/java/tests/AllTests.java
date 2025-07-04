@@ -14,10 +14,10 @@ import util.CookieManager;
  */
 public class AllTests extends BaseTest {
 
-    private static final String TEST_USERNAME = "testmail7654352@mail.ru";
-    private static final String TEST_PASSWORD = "qwe123123";
+    private static final String TEST_USERNAME = "WrongdoerTop1450";
+    private static final String TEST_PASSWORD = "popka068";
     private static final String COMMENT_TEXT = "lol";
-    private static final String COMMENT_AUTHOR = "FearlessMacaron214";
+    private static final String COMMENT_AUTHOR = "WrongdoerTop1450";
 
     private LoginPage loginPage;
     private FeedPage feedPage;
@@ -25,7 +25,8 @@ public class AllTests extends BaseTest {
     private CreatePostPage createPostPage;
 
     private void authorize() {
-        CookieManager.loadCookies(driver);
+        CookieManager.loadCookies(driver, TEST_USERNAME);
+
         if (driver.getCurrentUrl().contains("/login")) {
             try {
                 Thread.sleep(2000);
@@ -35,12 +36,13 @@ public class AllTests extends BaseTest {
                 Thread.sleep(1000);
                 loginPage.clickLoginButton();
                 Thread.sleep(3000);
-                CookieManager.saveCookies(driver);
+                CookieManager.saveCookies(driver, TEST_USERNAME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
 
     @Override
