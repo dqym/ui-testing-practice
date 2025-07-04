@@ -34,7 +34,7 @@ public abstract class BaseTest {
     @After
     public void closeBrowser() {
         if (driver != null) {
-//            driver.quit();
+             driver.quit();
         }
     }
 

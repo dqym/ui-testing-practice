@@ -36,7 +36,6 @@ public class LoginPage extends BasePage {
 
         loginButton = Button.of(driver, By.cssSelector("button.login"));
     }
-
     /**
      * Вводит имя пользователя в поле логина.
      *

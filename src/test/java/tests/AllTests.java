@@ -1,5 +1,6 @@
 package tests;
 
+import base.BasePage;
 import base.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,6 +17,8 @@ public class AllTests extends BaseTest {
 
     private static final String TEST_USERNAME = "testmail7654352@mail.ru";
     private static final String TEST_PASSWORD = "qwe123123";
+    private static final String TEST_USERNAME_2 = "testmail@mail.ru";
+    private static final String TEST_PASSWORD_2 = "popka068";
     private static final String COMMENT_TEXT = "lol";
     private static final String COMMENT_AUTHOR = "FearlessMacaron214";
 
@@ -51,6 +54,81 @@ public class AllTests extends BaseTest {
         feedPage = new FeedPage(driver);
         postPage = new PostPage(driver);
         createPostPage = new CreatePostPage(driver);
+    }
+    @Test
+    public void testSuccessfulLogin() {
+        // 3. Ввод учетных данных
+        loginPage.enterUsername(TEST_USERNAME);
+        loginPage.enterPassword(TEST_PASSWORD);
+
+        // 4. Нажатие кнопки входа
+        loginPage.clickLoginButton();
+
+        // 5. Ожидание загрузки фида (можно добавить явное ожидание)
+        try {
+            Thread.sleep(3000); // Лучше заменить на WebDriverWait
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // 7. Дополнительная проверка URL (опционально)
+        Assert.assertFalse("После авторизации остались на странице входа",loginPage.getCurrentUrl().contains("login"));
+    }
+    @Test
+    public void testUnsuccessfulLogin() {
+        // 3. Ввод учетных данных
+        loginPage.enterUsername(TEST_USERNAME_2);
+        loginPage.enterPassword(TEST_PASSWORD_2);
+
+        // 4. Нажатие кнопки входа
+        loginPage.clickLoginButton();
+
+        // 5. Ожидание загрузки фида (можно добавить явное ожидание)
+        try {
+            Thread.sleep(3000); // Лучше заменить на WebDriverWait
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // 7. Дополнительная проверка URL (опционально)
+        String currentUrl = driver.getCurrentUrl();
+        Assert.assertTrue("Ожидалось остаться на странице входа. Текущий URL: " + currentUrl, currentUrl.contains("login") || currentUrl.contains("error"));
+    }
+    @Test
+    public void testSuccessfulLogout() {
+        // 3. Ввод учетных данных
+        loginPage.enterUsername(TEST_USERNAME);
+        loginPage.enterPassword(TEST_PASSWORD);
+
+        // 4. Нажатие кнопки входа
+        loginPage.clickLoginButton();
+
+        feedPage.clickUserMenuButton();
+
+        feedPage.clickQuitButton();
+        // 5. Ожидание загрузки фида (можно добавить явное ожидание)
+        try {
+            Thread.sleep(3000); // Лучше заменить на WebDriverWait
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Assert.assertTrue("Кнопка входа не отображается после выхода",feedPage.FindLoginButton());
+    }
+    @Test
+    public void testCreatePost() {
+        authorize();
+
+        feedPage.clickCreatePost();
+
+        createPostPage.clickComunityPickerMenu();
+        createPostPage.enterUsernameText(COMMENT_AUTHOR);
+        createPostPage.clickSelectProfile(COMMENT_AUTHOR);
+        createPostPage.clickTitle();
+        createPostPage.enterPostTitleText();
+        createPostPage.clickBody();
+        createPostPage.enterPostBodyText();
+        createPostPage.clickSubmitPostButton();
+
+        String currentUrl = driver.getCurrentUrl();
+        Assert.assertTrue("Ожидалось перейти на страницу профиля. Текущий URL: " + currentUrl, currentUrl.contains("user") || currentUrl.contains("error"));
     }
 
     /**

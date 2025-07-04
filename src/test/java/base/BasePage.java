@@ -64,12 +64,7 @@ public abstract class BasePage {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
-    /**
-     * Явное ожидание: ждет, пока все элементы, найденные по локатору, станут видимыми.
-     *
-     * @param locator локатор элементов
-     * @return список видимых WebElement
-     */
+
     protected List<WebElement> waitForAllVisible(By locator) {
         return wait.until(driver -> {
             List<WebElement> elements = driver.findElements(locator);
@@ -111,3 +106,4 @@ public abstract class BasePage {
                 "arguments[0].scrollIntoView({block: 'center'});", element);
     }
 }
+

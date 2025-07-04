@@ -66,6 +66,20 @@ public class FeedPage extends BasePage {
         overflowButton.click();
     }
 
+    public void clickUserMenuButton() {
+        Button UserMenuButton = Button.of(driver, By.cssSelector("#expand-user-drawer-button"));
+
+        UserMenuButton.jsClick();
+    }
+    public void clickQuitButton() {
+        Button QuitButton = Button.of(driver, By.cssSelector("#logout-list-item"));
+
+        QuitButton.jsClick();
+    }
+    public boolean FindLoginButton(){
+        Button loginButton = Button.of(driver, By.cssSelector("faceplate-tracker[noun='login']"));
+        return loginButton.isVisible();
+    }
     public void clickPostOverflowReport() {
         Button overflowReportButton = Button.fromShadowHost(driver,
                 By.cssSelector("shreddit-post-overflow-menu"),
