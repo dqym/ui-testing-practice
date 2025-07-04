@@ -80,6 +80,20 @@ public class FeedPage extends BasePage {
         Button loginButton = Button.of(driver, By.cssSelector("faceplate-tracker[noun='login']"));
         return loginButton.isVisible();
     }
+    public boolean FindCloseHelperButton() {
+        Button CloseHelperButton = Button.of(driver, By.cssSelector("faceplate-tracker[class='text-14']"));
+        return CloseHelperButton.isVisible();
+    }
+
+
+    public void clickPostOverflowSaveButton() {
+        Button overflowReportButton = Button.fromShadowHost(driver,
+                By.cssSelector("shreddit-post-overflow-menu"),
+                By.cssSelector("#post-overflow-save"));
+
+        overflowReportButton.click();
+    }
+
     public void clickPostOverflowReport() {
         Button overflowReportButton = Button.fromShadowHost(driver,
                 By.cssSelector("shreddit-post-overflow-menu"),

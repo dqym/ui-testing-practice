@@ -131,6 +131,18 @@ public class AllTests extends BaseTest {
         Assert.assertTrue("Ожидалось перейти на страницу профиля. Текущий URL: " + currentUrl, currentUrl.contains("user") || currentUrl.contains("error"));
     }
 
+    @Test
+    public void testSavePost() {
+        authorize();
+
+        feedPage.clickPostOverflowMenu();
+        feedPage.clickPostOverflowSaveButton();
+
+        feedPage.clickPostOverflowMenu();
+        String currentUrl = driver.getCurrentUrl();
+        Assert.assertTrue("Ожидалось остаться в контекстном меню: " + currentUrl, currentUrl.contains("reddit"));
+    }
+
     /**
      * Тест проверяет возможность добавить комментарий под первым постом в ленте.
      */
