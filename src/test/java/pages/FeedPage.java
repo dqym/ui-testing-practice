@@ -19,9 +19,22 @@ import java.util.List;
  */
 public class FeedPage extends BasePage {
 
-    private static final By FEED_CONTAINER = By.cssSelector("shreddit-feed");
-    private static final By POST_ITEMS = By.cssSelector("shreddit-post");
-    private static final By POST_LINK = By.cssSelector("a[slot='full-post-link']");
+    private final By FEED_CONTAINER_LOCATOR = By.cssSelector("shreddit-feed");
+    private final By POST_ITEMS_LOCATOR = By.cssSelector("shreddit-post");
+    private final By POST_LINK_LOCATOR = By.cssSelector("a[slot='full-post-link']");
+    private final By POST_OVERFLOW_MENU_LOCATOR = By.cssSelector("shreddit-post-overflow-menu");
+    private final By POST_OVERFLOW_HIDE_LOCATOR = By.cssSelector("#post-overflow-hide");
+    private final By POST_OVERFLOW_REPORT_LOCATOR = By.cssSelector("#post-overflow-report");
+    private final By POST_OVERFLOW_REPORT_TYPE_LOCATOR = By.cssSelector("[slot-name='REPORT_REASONS']");
+    private final By POST_OVERFLOW_SPAM_LOCATOR = By.cssSelector("[value='SPAM']");
+    private final By POST_OVERFLOW_REPORT_NEXT_LOCATOR = By.cssSelector("#report-action-button");
+    private final By POST_OVERFLOW_SPAM_CATEGORY_LOCATOR = By.cssSelector("[slot-name='SPAM']");
+    private final By POST_OVERFLOW_REPORT_FLOOD_LOCATOR = By.cssSelector("[value='SPAM_COMMENT_FLOODING']");
+    private final By POST_REPORT_SEND_SUCCESSFUL_LOCATOR = By.cssSelector("[slot-name='SUCCESS']");
+    private final By SIDEBAR_MENU_LOCATOR = By.cssSelector("#flex-left-nav-contents");
+    private final By SIDEBAR_EXPAND_BUTTON_LOCATOR = By.cssSelector("#navbar-menu-button");
+    private final By SIDEBAR_CATEGORY_LOCATOR = By.cssSelector("left-nav-top-section");
+    private final By CREATE_POST_LINK_LOCATOR = By.cssSelector("#create-post");
     private String hiddenPostPermalink;
 
 
@@ -43,23 +56,18 @@ public class FeedPage extends BasePage {
      * открывая пост для просмотра. Использует JavaScript-клик для
      * гарантированного срабатывания даже при возможных проблемах
      * с видимостью элемента.
-     *
-     * @return WebElement первого поста в ленте
      * @throws IllegalStateException если в ленте не найдено ни одного поста
      */
-    public WebElement openFirstPost() {
+    public void openFirstPost() {
         List<WebElement> posts = getAllPosts();
 
         if (posts.isEmpty()) {
             throw new IllegalStateException("Посты не найдены в ленте.");
         }
 
-        WebElement firstPost = posts.getFirst();
-        Link link = Link.fromLocator(driver, POST_LINK);
+        Link link = Link.fromLocator(driver, POST_LINK_LOCATOR);
 
         link.jsClick();
-
-        return firstPost;
     }
 
     /**
@@ -73,9 +81,9 @@ public class FeedPage extends BasePage {
      * @return список элементов постов, отображаемых в ленте
      * @throws TimeoutException если контейнер ленты не загрузился за отведенное время
      */
-    public List<WebElement> getAllPosts() {
-        waitForVisible(FEED_CONTAINER);
-        return waitForAllVisible(POST_ITEMS);
+    private List<WebElement> getAllPosts() {
+        waitForVisible(FEED_CONTAINER_LOCATOR);
+        return waitForAllVisible(POST_ITEMS_LOCATOR);
     }
 
     /**
@@ -86,7 +94,7 @@ public class FeedPage extends BasePage {
      * над постом (скрыть, пожаловаться и т.д.).
      */
     public void clickPostOverflowMenu() {
-        Button overflowButton = Button.fromLocator(driver, By.cssSelector("shreddit-post-overflow-menu"));
+        Button overflowButton = Button.fromLocator(driver, POST_OVERFLOW_MENU_LOCATOR);
 
         overflowButton.click();
     }
@@ -112,11 +120,11 @@ public class FeedPage extends BasePage {
 
         hiddenPostPermalink = firstPost.getAttribute("permalink");
 
-        Button overflowReportButton = Button.fromShadowHost(driver,
-                By.cssSelector("shreddit-post-overflow-menu"),
-                By.cssSelector("#post-overflow-hide"));
+        Button overflowHideButton = Button.fromShadowHost(driver,
+                POST_OVERFLOW_MENU_LOCATOR,
+                POST_OVERFLOW_HIDE_LOCATOR);
 
-        overflowReportButton.click();
+        overflowHideButton.click();
     }
 
     /**
@@ -158,8 +166,8 @@ public class FeedPage extends BasePage {
      */
     public void clickPostOverflowReport() {
         Button overflowReportButton = Button.fromShadowHost(driver,
-                By.cssSelector("shreddit-post-overflow-menu"),
-                By.cssSelector("#post-overflow-report"));
+                POST_OVERFLOW_MENU_LOCATOR,
+                POST_OVERFLOW_REPORT_LOCATOR);
 
         overflowReportButton.click();
     }
@@ -176,8 +184,8 @@ public class FeedPage extends BasePage {
      */
     public void clickReportSPAMButton() {
         Button SPAM = Button.fromShadowHost(driver,
-                By.cssSelector("[slot-name='REPORT_REASONS']"),
-                By.cssSelector("[value='SPAM']"));
+                POST_OVERFLOW_REPORT_TYPE_LOCATOR,
+                POST_OVERFLOW_SPAM_LOCATOR);
 
         SPAM.click();
     }
@@ -194,8 +202,8 @@ public class FeedPage extends BasePage {
      */
     public void clickNextReportButton() {
         Button nextReport = Button.fromShadowHost(driver,
-                By.cssSelector("[slot-name='REPORT_REASONS']"),
-                By.cssSelector("#report-action-button"));
+                POST_OVERFLOW_REPORT_TYPE_LOCATOR,
+                POST_OVERFLOW_REPORT_NEXT_LOCATOR);
 
         nextReport.jsClick();
     }
@@ -212,8 +220,8 @@ public class FeedPage extends BasePage {
      */
     public void clickCategoryOfSPAM() {
         Button category = Button.fromShadowHost(driver,
-                By.cssSelector("[slot-name='SPAM']"),
-                By.cssSelector("[value='SPAM_COMMENT_FLOODING']"));
+                POST_OVERFLOW_SPAM_CATEGORY_LOCATOR,
+                POST_OVERFLOW_REPORT_FLOOD_LOCATOR);
 
         category.click();
     }
@@ -230,8 +238,8 @@ public class FeedPage extends BasePage {
      */
     public void clickSendReportButton() {
         Button sendReport = Button.fromShadowHost(driver,
-                By.cssSelector("[slot-name='SPAM']"),
-                By.cssSelector("#report-action-button"));
+                POST_OVERFLOW_SPAM_CATEGORY_LOCATOR,
+                POST_OVERFLOW_REPORT_NEXT_LOCATOR);
 
         sendReport.jsClick();
     }
@@ -246,7 +254,7 @@ public class FeedPage extends BasePage {
      * @throws NoSuchElementException если не удалось найти элемент успешной отправки
      */
     public Boolean isReportSend() {
-        WebElement successPlate = driver.findElement(By.cssSelector("[slot-name='SUCCESS']"));
+        WebElement successPlate = driver.findElement(POST_REPORT_SEND_SUCCESSFUL_LOCATOR);
 
         return successPlate.isDisplayed();
     }
@@ -259,9 +267,9 @@ public class FeedPage extends BasePage {
      * чтобы раскрыть боковую панель.
      */
     public void expandSideBar() {
-        WebElement sideBar = driver.findElement(By.cssSelector("#flex-left-nav-contents"));
+        WebElement sideBar = driver.findElement(SIDEBAR_MENU_LOCATOR);
         if (!sideBar.isDisplayed()) {
-            Button sideBarButton = Button.fromLocator(driver, By.cssSelector("#navbar-menu-button"));
+            Button sideBarButton = Button.fromLocator(driver, SIDEBAR_EXPAND_BUTTON_LOCATOR);
             sideBarButton.click();
         }
     }
@@ -280,7 +288,7 @@ public class FeedPage extends BasePage {
      */
     public void clickCategoryButton(String nameCategory) {
         Link homePageLink = Link.fromShadowHost(driver,
-                By.cssSelector("left-nav-top-section"),
+                SIDEBAR_CATEGORY_LOCATOR,
                 By.cssSelector("faceplate-tracker[noun='" + nameCategory + "'] a"));
 
         homePageLink.jsClick();
@@ -300,7 +308,7 @@ public class FeedPage extends BasePage {
      */
     public Boolean checkActivePage(String namePage) {
         Button home = Button.fromShadowHost(driver,
-                By.cssSelector("left-nav-top-section"),
+                SIDEBAR_CATEGORY_LOCATOR,
                 By.cssSelector("#" + namePage + "-posts"));
 
         String href = home.getElement().findElement(By.cssSelector("a[href]")).getAttribute("href");
@@ -317,7 +325,7 @@ public class FeedPage extends BasePage {
      * @throws NoSuchElementException если кнопка создания поста не найдена
      */
     public void clickCreatePost() {
-        Link createPost = Link.fromLocator(driver, By.cssSelector("#create-post"));
+        Link createPost = Link.fromLocator(driver, CREATE_POST_LINK_LOCATOR);
         createPost.click();
     }
 }

@@ -11,10 +11,11 @@ import org.openqa.selenium.WebDriver;
  * Предоставляет методы для взаимодействия с полями ввода и кнопкой входа.
  */
 public class LoginPage extends BasePage {
-
-    private final Input usernameInput;
-    private final Input passwordInput;
-    private final Button loginButton;
+    private final By USERNAME_INPUT_LOCATOR = By.cssSelector("faceplate-text-input#login-username");
+    private final By USERNAME_INNER_INPUT_LOCATOR = By.cssSelector("input[name='username']");
+    private final By PASSWORD_INPUT_LOCATOR = By.cssSelector("faceplate-text-input#login-password");
+    private final By PASSWORD_INNER_INPUT_LOCATOR = By.cssSelector("input[name='password']");
+    private final By LOGIN_BUTTON_LOCATOR = By.cssSelector("button.login");
 
     /**
      * Конструктор страницы логина.
@@ -24,16 +25,6 @@ public class LoginPage extends BasePage {
      */
     public LoginPage(WebDriver driver) {
         super(driver);
-
-        usernameInput = Input.fromShadowHost(driver,
-                By.cssSelector("faceplate-text-input#login-username"),
-                By.cssSelector("input[name='username']"));
-
-        passwordInput = Input.fromShadowHost(driver,
-                By.cssSelector("faceplate-text-input#login-password"),
-                By.cssSelector("input[name='password']"));
-
-        loginButton = Button.fromLocator(driver, By.cssSelector("button.login"));
     }
 
     /**
@@ -42,6 +33,10 @@ public class LoginPage extends BasePage {
      * @param username имя пользователя
      */
     public void enterUsername(String username) {
+        Input usernameInput = Input.fromShadowHost(driver,
+                USERNAME_INPUT_LOCATOR,
+                USERNAME_INNER_INPUT_LOCATOR);
+
         usernameInput.sendKeys(username);
     }
 
@@ -51,6 +46,10 @@ public class LoginPage extends BasePage {
      * @param password пароль пользователя
      */
     public void enterPassword(String password) {
+        Input passwordInput = Input.fromShadowHost(driver,
+                PASSWORD_INPUT_LOCATOR,
+                PASSWORD_INNER_INPUT_LOCATOR);
+
         passwordInput.sendKeys(password);
     }
 
@@ -58,6 +57,8 @@ public class LoginPage extends BasePage {
      * Кликает кнопку входа и ожидает перезагрузку страницы.
      */
     public void clickLoginButton() {
+        Button loginButton = Button.fromLocator(driver, LOGIN_BUTTON_LOCATOR);
+
         loginButton.click();
 
         try {

@@ -29,15 +29,6 @@ public abstract class BasePage {
     }
 
     /**
-     * Открывает указанную страницу по URL.
-     *
-     * @param url адрес страницы
-     */
-    public void open(String url) {
-        driver.get(url);
-    }
-
-    /**
      * Обновляет текущую страницу в браузере.
      */
     public void refresh() {

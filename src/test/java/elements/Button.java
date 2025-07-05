@@ -27,18 +27,6 @@ public class Button extends ClickableElement {
     }
 
     /**
-     * Создаёт кнопку по тексту (XPath).
-     *
-     * @param driver WebDriver
-     * @param text   текст кнопки
-     * @return объект Button
-     */
-    public static Button byText(WebDriver driver, String text) {
-        By by = By.xpath(String.format("//button[normalize-space()='%s']", text));
-        return fromLocator(driver, by);
-    }
-
-    /**
      * Создает объект Button для элемента, находящегося в Shadow DOM.
      * <p>
      * Метод ищет элемент-хост Shadow DOM по указанному локатору,

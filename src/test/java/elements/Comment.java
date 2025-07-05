@@ -12,6 +12,8 @@ import org.openqa.selenium.*;
  */
 public class Comment extends BaseElement {
 
+    private final By COMMENT_TEXT = By.cssSelector("div[id$='-post-rtjson-content'] p");
+
     /**
      * Конструктор комментария на основе WebElement.
      * <p>
@@ -66,7 +68,7 @@ public class Comment extends BaseElement {
      */
     @Override
     public String getText() {
-        WebElement textElement = getElement().findElement(By.cssSelector("div[id$='-post-rtjson-content'] p"));
+        WebElement textElement = getElement().findElement(COMMENT_TEXT);
         return textElement.getText();
     }
 }

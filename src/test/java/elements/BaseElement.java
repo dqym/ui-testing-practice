@@ -105,15 +105,4 @@ public abstract class BaseElement {
     public String getText() {
         return getElement().getText();
     }
-
-    /**
-     * Прокручивает страницу к элементу, чтобы он был виден в центре экрана.
-     * <p>
-     * Метод использует JavaScript для прокрутки страницы таким образом,
-     * чтобы элемент оказался в центре видимой области.
-     */
-    public void scrollToElement() {
-        ((JavascriptExecutor) driver)
-                .executeScript("arguments[0].scrollIntoView({block: 'center'});", getElement());
-    }
 }

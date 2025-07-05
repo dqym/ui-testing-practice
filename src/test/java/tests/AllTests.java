@@ -2,10 +2,13 @@ package tests;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.FeedPage;
 import pages.LoginPage;
 import pages.PostPage;
 import util.CookieManager;
+
+import java.time.Duration;
 
 
 /**
@@ -16,7 +19,6 @@ import util.CookieManager;
  * скрытие постов.
  */
 public class AllTests extends BaseTest {
-
 
     private static final String TEST_USERNAME = "testmail99213@mail.ru";
     private static final String TEST_PASSWORD = "#55Ra9k9?j@xTyv";
@@ -185,7 +187,7 @@ public class AllTests extends BaseTest {
      * @throws InterruptedException если выполнение потока было прервано во время ожидания
      */
     @Test
-    public void testHidePost() throws InterruptedException {
+    public void testHidePost() {
         LoginPage loginPage = new LoginPage(driver);
         authorize(loginPage);
 
@@ -193,8 +195,10 @@ public class AllTests extends BaseTest {
         feedPage.clickPostOverflowMenu();
         feedPage.clickPostOverflowHide();
 
-        Thread.sleep(3000);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        boolean hidden = wait.until(driver -> feedPage.isPostHidden());
 
-        Assert.assertTrue("Пост не скрыт", feedPage.isPostHidden());
+        Assert.assertTrue("Пост не скрыт", hidden);
     }
+
 }

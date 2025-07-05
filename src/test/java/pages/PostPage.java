@@ -13,9 +13,9 @@ import org.openqa.selenium.WebElement;
  */
 public class PostPage extends BasePage {
 
-    private static final By ADD_COMMENT_BUTTON = By.cssSelector("[noun='add_comment_button']");
-    private static final By COMMENT_INPUT_CONTAINER = By.cssSelector("#main-content shreddit-composer > div:nth-child(1)");
-    private static final By SUBMIT_COMMENT_BUTTON = By.cssSelector("button[slot='submit-button']");
+    private final By ADD_COMMENT_BUTTON = By.cssSelector("[noun='add_comment_button']");
+    private final By COMMENT_INPUT_CONTAINER = By.cssSelector("#main-content shreddit-composer > div:nth-child(1)");
+    private final By SUBMIT_COMMENT_BUTTON = By.cssSelector("button[slot='submit-button']");
 
     /**
      * Конструктор страницы поста.

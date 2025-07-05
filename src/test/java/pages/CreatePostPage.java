@@ -24,11 +24,15 @@ import java.util.List;
  */
 public class CreatePostPage extends BasePage {
 
-    /** Стандартный текст заголовка поста для тестирования. */
-    private static final String POST_TITLE = "test1";
-
-    /** Стандартный текст содержания поста для тестирования. */
-    private static final String POST_TEXT = "test1";
+    private static final String POST_TITLE = "test title";
+    private static final String POST_TEXT = "test text";
+    private final By POST_TITLE_LOCATOR = By.cssSelector("faceplate-textarea-input[name='title']");
+    private final By POST_TEXT_LOCATOR = By.cssSelector("shreddit-composer[id='post-composer_bodytext']");
+    private final By SUBMIT_POST_BUTTON_LOCATOR = By.cssSelector("#submit-post-button");
+    private final By INNER_SUBMIT_POST_BUTTON_LOCATOR = By.cssSelector("#inner-post-submit-button");
+    private final By PROFILE_PICKER_MENU_LOCATOR = By.cssSelector("#post-submit-community-picker");
+    private final By PROFILE_PICKER_MENU_SEARCH_INPUT_LOCATOR = By.cssSelector("#search-input");
+    private final By PROFILE_PICKER_MENU_LIST_ITEM_LOCATOR = By.cssSelector("li[data-select-value]");
 
     /**
      * Конструктор страницы создания поста.
@@ -48,7 +52,7 @@ public class CreatePostPage extends BasePage {
      * чтобы активировать для ввода текста.
      */
     public void clickTitle() {
-        Input textField = Input.fromLocator(driver, By.cssSelector("faceplate-textarea-input[name='title']"));
+        Input textField = Input.fromLocator(driver, POST_TITLE_LOCATOR);
 
         textField.click();
     }
@@ -60,7 +64,7 @@ public class CreatePostPage extends BasePage {
      * предопределенный текст из константы POST_TITLE.
      */
     public void enterPostTitleText() {
-        Input textField = Input.fromLocator(driver, By.cssSelector("faceplate-textarea-input[name='title']"));
+        Input textField = Input.fromLocator(driver, POST_TITLE_LOCATOR);
 
         textField.sendKeys(POST_TITLE);
     }
@@ -72,7 +76,7 @@ public class CreatePostPage extends BasePage {
      * активируя для ввода содержимого поста.
      */
     public void clickBody() {
-        Input textField = Input.fromLocator(driver, By.cssSelector("shreddit-composer[id='post-composer_bodytext']"));
+        Input textField = Input.fromLocator(driver, POST_TEXT_LOCATOR);
 
         textField.click();
     }
@@ -84,7 +88,7 @@ public class CreatePostPage extends BasePage {
      * предопределенный текст из константы POST_TEXT.
      */
     public void enterPostBodyText() {
-        Input textField = Input.fromLocator(driver, By.cssSelector("shreddit-composer[id='post-composer_bodytext']"));
+        Input textField = Input.fromLocator(driver, POST_TEXT_LOCATOR);
 
         textField.sendKeys(POST_TEXT);
     }
@@ -96,7 +100,7 @@ public class CreatePostPage extends BasePage {
      * выпадающий список доступных сообществ для публикации поста.
      */
     public void clickComunityPickerMenu() {
-        Button menu = Button.fromLocator(driver, By.cssSelector("#post-submit-community-picker"));
+        Button menu = Button.fromLocator(driver, PROFILE_PICKER_MENU_LOCATOR);
 
         menu.click();
     }
@@ -112,8 +116,8 @@ public class CreatePostPage extends BasePage {
      */
     public void enterUsernameText(String username) {
         Input input = Input.fromShadowHost(driver,
-                By.cssSelector("#post-submit-community-picker"),
-                By.cssSelector("#search-input"));
+                PROFILE_PICKER_MENU_LOCATOR,
+                PROFILE_PICKER_MENU_SEARCH_INPUT_LOCATOR);
 
         input.sendKeys("u/" + username);
     }
@@ -129,12 +133,12 @@ public class CreatePostPage extends BasePage {
      * @throws NoSuchElementException если профиль с указанным именем не найден в списке
      */
     public void clickSelectProfile(String profileName) {
-        WebElement host = driver.findElement(By.cssSelector("#post-submit-community-picker"));
+        WebElement host = driver.findElement(PROFILE_PICKER_MENU_LOCATOR);
         SearchContext shadowRoot = host.getShadowRoot();
 
         List<WebElement> listItems = new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(driver -> {
-                    List<WebElement> items = shadowRoot.findElements(By.cssSelector("li[data-select-value]"));
+                    List<WebElement> items = shadowRoot.findElements(PROFILE_PICKER_MENU_LIST_ITEM_LOCATOR);
                     return items.isEmpty() ? null : items;
                 });
 
@@ -155,8 +159,8 @@ public class CreatePostPage extends BasePage {
      */
     public void clickSubmitPostButton() {
         Button postButton = Button.fromShadowHost(driver,
-                By.cssSelector("#submit-post-button"),
-                By.cssSelector("#inner-post-submit-button"));
+                SUBMIT_POST_BUTTON_LOCATOR,
+                INNER_SUBMIT_POST_BUTTON_LOCATOR);
 
         postButton.jsClick();
     }
