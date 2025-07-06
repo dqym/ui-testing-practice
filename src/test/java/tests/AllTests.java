@@ -38,8 +38,9 @@ public class AllTests extends BaseTest {
      * как подозрительную активность. Задержки имитируют поведение реального пользователя.
      *
      * @param loginPage объект страницы логина для взаимодействия с формой входа
+     * @return FeedPage объект страницы после авторизации
      */
-    private void authorize(LoginPage loginPage) {
+    private FeedPage authorize(LoginPage loginPage) {
         CookieManager.loadCookies(driver, TEST_USERNAME);
 
         if (driver.getCurrentUrl().contains("/login")) {
@@ -56,6 +57,8 @@ public class AllTests extends BaseTest {
                 e.printStackTrace();
             }
         }
+
+        return new FeedPage(driver);
     }
 
     /**
@@ -70,12 +73,9 @@ public class AllTests extends BaseTest {
     @Test
     public void testAddComment() {
         LoginPage loginPage = new LoginPage(driver);
-        authorize(loginPage);
+        FeedPage feedPage = authorize(loginPage);
 
-        FeedPage feedPage = new FeedPage(driver);
-        feedPage.openFirstPost();
-
-        PostPage postPage = new PostPage(driver);
+        PostPage postPage = feedPage.openFirstPost();
         postPage.clickAddCommentButton();
         postPage.enterCommentText(COMMENT_TEXT);
         postPage.clickSubmitCommentButton();
@@ -100,9 +100,8 @@ public class AllTests extends BaseTest {
     @Test
     public void testSendReport() {
         LoginPage loginPage = new LoginPage(driver);
-        authorize(loginPage);
+        FeedPage feedPage = authorize(loginPage);
 
-        FeedPage feedPage = new FeedPage(driver);
         feedPage.clickPostOverflowMenu();
         feedPage.clickPostOverflowReport();
         feedPage.clickReportSPAMButton();
@@ -125,13 +124,13 @@ public class AllTests extends BaseTest {
     @Test
     public void testNavigationBarHome() {
         LoginPage loginPage = new LoginPage(driver);
-        authorize(loginPage);
+        FeedPage feedPage = authorize(loginPage);
 
-        FeedPage feedPage = new FeedPage(driver);
         feedPage.expandSideBar();
         feedPage.clickCategoryButton("home");
 
-        Assert.assertTrue("Текущий URL не соответствует ожидаемому", feedPage.checkActivePage("home"));
+        Assert.assertTrue("Текущий URL не соответствует ожидаемому",
+                feedPage.checkActivePage("home"));
     }
 
     /**
@@ -146,9 +145,8 @@ public class AllTests extends BaseTest {
     @Test
     public void testNavigationBarPopular() {
         LoginPage loginPage = new LoginPage(driver);
-        authorize(loginPage);
+        FeedPage feedPage = authorize(loginPage);
 
-        FeedPage feedPage = new FeedPage(driver);
         feedPage.expandSideBar();
         feedPage.clickCategoryButton("popular");
 
@@ -168,9 +166,8 @@ public class AllTests extends BaseTest {
     @Test
     public void testNavigationBarAll() {
         LoginPage loginPage = new LoginPage(driver);
-        authorize(loginPage);
+        FeedPage feedPage = authorize(loginPage);
 
-        FeedPage feedPage = new FeedPage(driver);
         feedPage.expandSideBar();
         feedPage.clickCategoryButton("all");
 
@@ -193,9 +190,8 @@ public class AllTests extends BaseTest {
     @Test
     public void testHidePost() {
         LoginPage loginPage = new LoginPage(driver);
-        authorize(loginPage);
+        FeedPage feedPage = authorize(loginPage);
 
-        FeedPage feedPage = new FeedPage(driver);
         feedPage.clickPostOverflowMenu();
         feedPage.clickPostOverflowHide();
 

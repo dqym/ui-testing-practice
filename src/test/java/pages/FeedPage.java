@@ -56,9 +56,10 @@ public class FeedPage extends BasePage {
      * открывая пост для просмотра. Использует JavaScript-клик для
      * гарантированного срабатывания даже при возможных проблемах
      * с видимостью элемента.
+     * @return PostPage элемент страницы, который представляет пост
      * @throws IllegalStateException если в ленте не найдено ни одного поста
      */
-    public void openFirstPost() {
+    public PostPage openFirstPost() {
         List<WebElement> posts = getAllPosts();
 
         if (posts.isEmpty()) {
@@ -68,6 +69,8 @@ public class FeedPage extends BasePage {
         Link link = Link.fromLocator(driver, POST_LINK_LOCATOR);
 
         link.jsClick();
+
+        return new PostPage(driver);
     }
 
     /**
