@@ -11,7 +11,7 @@ import org.openqa.selenium.WebElement;
  */
 public class Input extends BaseElement {
 
-    protected Input(WebDriver driver, WebElement element) {
+    public Input(WebDriver driver, WebElement element) {
         super(driver, element);
     }
 

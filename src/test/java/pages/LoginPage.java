@@ -58,7 +58,6 @@ public class LoginPage extends BasePage {
      * Кликает кнопку входа и ожидает перезагрузку страницы.
      */
     public void clickLoginButton() {
-//        WebElement oldPage = driver.findElement(By.tagName("html"));
         loginButton.click();
 
         try {
@@ -68,9 +67,6 @@ public class LoginPage extends BasePage {
         }
 
         driver.navigate().refresh();         // Обновляем страницу после входа
-//        // Ожидаем, пока старая страница станет "устаревшей" (перезагрузится)
-//        wait.withTimeout(java.time.Duration.ofSeconds(6))
-//                .until(ExpectedConditions.stalenessOf(oldPage));
     }
 
 }

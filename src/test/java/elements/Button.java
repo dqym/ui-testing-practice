@@ -11,7 +11,7 @@ import org.openqa.selenium.WebElement;
  */
 public class Button extends BaseElement {
 
-    protected Button(WebDriver driver, WebElement element) {
+    public Button(WebDriver driver, WebElement element) {
         super(driver, element);
     }
 
@@ -27,18 +27,15 @@ public class Button extends BaseElement {
         return new Button(driver, element);
     }
 
-//    /**
-//     * Создаёт кнопку по локатору внутри объекта.
-//     *
-//     * @param by     локатор
-//     * @param driver WebDriver
-//     * @param webElement Веб-элемент
-//     * @return объект Button
-//     */
-//    public static Button of(WebDriver driver, By by, WebElement webElement) {
-//        WebElement element = webElement.findElement(by);
-//        return new Button(driver, element);
-//    }
+    // Добавляем методы для работы с элементами
+    public String getAttribute(String name) {
+        return getElement().getAttribute(name);
+    }
+
+    public String getText() {
+        return getElement().getText();
+    }
+
 
     /**
      * Создаёт кнопку по тексту (XPath).
@@ -47,10 +44,6 @@ public class Button extends BaseElement {
      * @param text   текст кнопки
      * @return объект Button
      */
-    public static Button byText(WebDriver driver, String text) {
-        By by = By.xpath(String.format("//button[normalize-space()='%s']", text));
-        return of(driver, by);
-    }
 
     public static Button fromShadowHost(WebDriver driver, By hostLocator, By shadowLocator) {
         WebElement host = driver.findElement(hostLocator);

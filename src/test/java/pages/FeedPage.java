@@ -1,11 +1,13 @@
 package pages;
 
 import base.BasePage;
-import base.BaseElement;
 import elements.Button;
 import elements.Link;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -13,11 +15,10 @@ import java.util.List;
  * Отвечает за действия, связанные с открытием постов.
  */
 public class FeedPage extends BasePage {
-
     private static final By FEED_CONTAINER = By.cssSelector("shreddit-feed");
     private static final By POST_ITEMS = By.cssSelector("shreddit-post");
-    private static final By POST_LINK = By.cssSelector("a[slot='full-post-link']");
-
+    private static final By POST_LINK = By.cssSelector("a[slot='full-post-link'], a[data-testid='post-title']");
+    private static final By SEARCH_RESULT_TITLE = By.cssSelector("h3, [data-testid='post-title']");
     /**
      * Конструктор страницы ленты.
      *
@@ -80,11 +81,6 @@ public class FeedPage extends BasePage {
         Button loginButton = Button.of(driver, By.cssSelector("faceplate-tracker[noun='login']"));
         return loginButton.isVisible();
     }
-    public boolean FindCloseHelperButton() {
-        Button CloseHelperButton = Button.of(driver, By.cssSelector("faceplate-tracker[class='text-14']"));
-        return CloseHelperButton.isVisible();
-    }
-
 
     public void clickPostOverflowSaveButton() {
         Button overflowReportButton = Button.fromShadowHost(driver,
@@ -169,5 +165,61 @@ public class FeedPage extends BasePage {
     public void clickCreatePost() {
         Link createPost = Link.of(driver, By.cssSelector("#create-post"));
         createPost.click();
+    }
+
+    /**
+     * Выполняет поиск по ключевому слову
+     */
+    public void searchFor(String keyword) {
+        // Находим поле поиска через JavaScript
+        WebElement searchInput = findSearchInput();
+
+        // Очищаем и вводим текст
+        searchInput.clear();
+        searchInput.sendKeys(keyword);
+        searchInput.sendKeys(Keys.ENTER);
+
+        // Ждем загрузки страницы
+        waitForPageLoad();
+    }
+
+    /**
+     * Находит поле поиска через JavaScript
+     */
+    private WebElement findSearchInput() {
+        return (WebElement) ((JavascriptExecutor) driver).executeScript(
+                "function findSearchInput() {" +
+                        "   const host = document.querySelector('reddit-search-large');" +
+                        "   if (!host) return null;" +
+                        "   const shadow1 = host.shadowRoot;" +
+                        "   if (!shadow1) return null;" +
+                        "   const faceplate = shadow1.querySelector('faceplate-search-input');" +
+                        "   if (!faceplate) return null;" +
+                        "   const shadow2 = faceplate.shadowRoot;" +
+                        "   if (!shadow2) return null;" +
+                        "   return shadow2.querySelector('input[type=\"text\"], input[type=\"search\"]');" +
+                        "}" +
+                        "return findSearchInput();"
+        );
+    }
+
+    /**
+     * Получает текст первого заголовка в результатах поиска
+     */
+    public String getFirstSearchResultTitle() {
+        // Ждем появления заголовка
+        WebElement titleElement = new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(ExpectedConditions.presenceOfElementLocated(SEARCH_RESULT_TITLE));
+
+        return titleElement.getText();
+    }
+
+    /**
+     * Ждет загрузки страницы
+     */
+    private void waitForPageLoad() {
+        new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(d -> ((JavascriptExecutor) driver)
+                        .executeScript("return document.readyState").equals("complete"));
     }
 }

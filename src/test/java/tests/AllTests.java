@@ -1,14 +1,13 @@
 package tests;
 
-import base.BasePage;
 import base.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
-import pages.CreatePostPage;
-import pages.FeedPage;
-import pages.LoginPage;
-import pages.PostPage;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import pages.*;
 import util.CookieManager;
+
+import java.time.Duration;
 
 /**
  * Тест на добавление комментария к посту.
@@ -222,5 +221,87 @@ public class AllTests extends BaseTest {
         createPostPage.clickBody();
         createPostPage.enterPostBodyText();
         createPostPage.clickSubmitPostButton();
+    }
+
+    @Test
+    public void testUpvoteFunctionality() {
+        authorize();
+        feedPage.openFirstPost();
+
+        PostPage postPage = new PostPage(driver);
+        postPage.resetVote();
+        int initialCount = postPage.getVoteCount();
+
+        postPage.upvotePost();
+
+        Assert.assertTrue(postPage.isUpvoted());
+        Assert.assertEquals(postPage.getVoteCount(), initialCount + 1);
+    }
+
+    @Test
+    public void testDownvoteFunctionality() {
+        authorize();
+        feedPage.openFirstPost();
+
+        PostPage postPage = new PostPage(driver);
+        postPage.resetVote();
+        int initialCount = postPage.getVoteCount();
+
+        postPage.downvotePost();
+
+        Assert.assertTrue(postPage.isDownvoted());
+        Assert.assertEquals(postPage.getVoteCount(), initialCount - 1);
+    }
+
+    @Test
+    public void testSubscribeToSubreddit() {
+        // Авторизация
+        authorize();
+
+        // Переходим на страницу сабреддита
+        String subredditUrl = "https://www.reddit.com/r/reddit_ukr";
+        driver.get(subredditUrl);
+
+        // Создаем экземпляр CommunityPage
+        CommunityPage communityPage = new CommunityPage(driver);
+
+        // Ждем появления кнопки подписки
+        communityPage.waitForSubscribeButton();
+
+        // Проверяем начальное состояние
+        boolean initiallySubscribed = communityPage.isSubscribed();
+        System.out.println("Начальное состояние подписки: " + (initiallySubscribed ? "подписан" : "не подписан"));
+
+        // Выполняем действие: подписываемся или отписываемся
+        communityPage.clickSubscribeButton();
+
+        // Ждем изменения состояния (до 15 секунд)
+        new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(d -> communityPage.isSubscribed() != initiallySubscribed);
+
+        // Проверяем конечное состояние
+        boolean finallySubscribed = communityPage.isSubscribed();
+        System.out.println("Конечное состояние подписки: " + (finallySubscribed ? "подписан" : "не подписан"));
+
+        // Проверяем, что состояние изменилось
+        Assert.assertNotEquals("Состояние подписки не изменилось", initiallySubscribed, finallySubscribed);
+    }
+
+    @Test
+    public void testSearchPost() {
+        // Авторизация
+        authorize();
+
+        // Выполняем поиск
+        feedPage.searchFor("test");
+
+        // Получаем заголовок первого результата
+        String title = feedPage.getFirstSearchResultTitle().toLowerCase();
+
+        // Проверяем, что заголовок содержит ключевое слово
+        Assert.assertTrue(
+                "Заголовок первого результата не содержит 'test': " + title,
+                title.contains("test")
+        );
     }
 }
